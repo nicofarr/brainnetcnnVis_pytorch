@@ -70,7 +70,7 @@ class BrainNetCNN(torch.nn.Module):
 
 # Loader for GoldMSI-LSD77 dataset
 
-# In[4]:
+# In[20]:
 
 
 behavdir = "/Users/nicolasfarrugia/Documents/recherche/git/Gold-MSI-LSD77/behav"
@@ -100,7 +100,7 @@ class GoldMSI_LSD_Dataset(torch.utils.data.Dataset):
         y_2=y_all[:,[3,4]]
         y = normalize(y_2,axis=0)
         
-        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.33)
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.33,random_state=42)
         
         if self.mode=="train":
             
@@ -134,7 +134,7 @@ class GoldMSI_LSD_Dataset(torch.utils.data.Dataset):
         return sample
 
 
-# In[5]:
+# In[21]:
 
 
 trainset = GoldMSI_LSD_Dataset(mode="train")
@@ -146,7 +146,7 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=20, shuffle=False, 
 
 # Training
 
-# In[6]:
+# In[22]:
 
 
 net = BrainNetCNN(trainset.X)
@@ -158,9 +158,9 @@ if use_cuda:
         
         
 momentum = 0.9
-lr = 0.005
-#wd = 0.0005 ## Decay for L2 regularization 
-wd = 0
+lr = 0.05
+wd = 0.0005 ## Decay for L2 regularization 
+#wd = 0
 
 
 ### Weights initialization for the dense layers using He Uniform initialization
@@ -182,7 +182,7 @@ criterion = torch.nn.MSELoss()
 optimizer = torch.optim.SGD(net.parameters(),lr=lr,momentum=momentum,nesterov=True,weight_decay=wd)
 
 
-# In[7]:
+# In[23]:
 
 
 def train(epoch):
