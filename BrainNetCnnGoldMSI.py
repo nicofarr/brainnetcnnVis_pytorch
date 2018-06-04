@@ -1,4 +1,8 @@
 
+
+
+
+
 # coding: utf-8
 
 # In[1]:
@@ -73,7 +77,7 @@ class BrainNetCNN(torch.nn.Module):
 # In[20]:
 
 
-behavdir = "/Users/nicolasfarrugia/Documents/recherche/git/Gold-MSI-LSD77/behav"
+behavdir = "/home/nfarrugi/campus/data_lsd/behav"
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import normalize
@@ -158,7 +162,7 @@ if use_cuda:
         
         
 momentum = 0.9
-lr = 0.05
+lr = 0.005
 wd = 0.0005 ## Decay for L2 regularization 
 #wd = 0
 
@@ -175,7 +179,7 @@ def init_weights_he(m):
         m.weight.data.uniform_(-he_lim,he_lim)
         print(m.weight)
 
-net.apply(init_weights_he)
+#net.apply(init_weights_he)
 
 
 criterion = torch.nn.MSELoss()
@@ -208,7 +212,8 @@ def train(epoch):
 
         
         # print statistics
-        running_loss += loss.item()
+        running_loss += loss.data[0]
+
         
         #if batch_idx % 10 == 9:    # print every 10 mini-batches
         #    print('Training loss: %.6f' % ( running_loss / 10))
@@ -241,7 +246,7 @@ def test():
             outputs = net(inputs)
             loss = criterion(outputs, targets)
 
-            test_loss += loss.item()
+            test_loss += loss.data[0]
             
             preds.append(outputs.numpy())
             ytrue.append(targets.numpy())
@@ -250,7 +255,7 @@ def test():
     
         
         # print statistics
-        running_loss += loss.item()
+        running_loss += loss.data[0].numpy()
         #if batch_idx % 5 == 4:    # print every 5 mini-batches
         #    print('Test loss: %.6f' % ( running_loss / 5))
         #    running_loss = 0.0
@@ -317,22 +322,10 @@ for epoch in range(nbepochs):
     
 
 
-# In[ ]:
-
-
-from matplotlib import pyplot as plt 
-get_ipython().run_line_magic('matplotlib', 'inline')
-
-plt.plot(allloss_train)
-plt.plot(allloss_test)
+# In[ ]
 
 
 # In[ ]:
-
-
-plt.plot(allmae_test1)
-plt.plot(allmae_test2)
-
 
 # Run this to save the model 
 
